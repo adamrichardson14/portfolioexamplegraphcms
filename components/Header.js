@@ -25,6 +25,11 @@ export default function Header() {
               <a className="text-gray-900 hover:text-gray-700">Blog</a>
             </Link>
           </li>
+          <li className="ml-4">
+            <Link href="/gallery">
+              <a className="text-gray-900 hover:text-gray-700">Gallery</a>
+            </Link>
+          </li>
         </ul>
       </div>
     </div>
