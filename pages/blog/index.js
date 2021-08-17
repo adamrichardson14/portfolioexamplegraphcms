@@ -1,6 +1,6 @@
+import { request } from "graphql-request";
 import Link from "next/link";
 import { useState } from "react";
-import { request } from "graphql-request";
 import useSWR from "swr";
 
 const fetcher = (endpoint, query, variables) => request(endpoint, query, variables);
