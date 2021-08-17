@@ -10,10 +10,7 @@ export const getStaticProps = async () => {
     "https://api-eu-central-1.graphcms.com/v2/cko71v4sny8f901z1axdbc1u9/master",
     `
     query getPosts() {
-      postsConnection(orderBy: date_DESC skip: 0, first: 2) {
-        aggregate{
-          count
-        }
+      postsConnection(orderBy: date_DESC, first: 2, skip: 0) {
         edges {
           node {
             id
@@ -27,16 +24,16 @@ export const getStaticProps = async () => {
             }
           }
         }
-        pageInfo {
+        pageInfo{
           hasNextPage
           hasPreviousPage
           pageSize
         }
       }
     }
+    
 `,
   );
-
   return {
     props: {
       posts: data,
@@ -51,10 +48,7 @@ export default function BlogPage({ posts }) {
     [
       "https://api-eu-central-1.graphcms.com/v2/cko71v4sny8f901z1axdbc1u9/master",
       `query getPosts($searchValue: String $skip: Int) {
-        postsConnection(orderBy: date_DESC, where: {title_contains: $searchValue}, skip: $skip, first: 2) {
-          aggregate{
-            count
-          }
+        postsConnection(orderBy: date_DESC, where: {title_contains: $searchValue}, first: 2, skip: $skip) {
           edges {
             node {
               id
@@ -68,7 +62,7 @@ export default function BlogPage({ posts }) {
               }
             }
           }
-          pageInfo {
+          pageInfo{
             hasNextPage
             hasPreviousPage
             pageSize
@@ -83,7 +77,7 @@ export default function BlogPage({ posts }) {
     (endpoint, query) => fetcher(endpoint, query, { searchValue, skip }),
     { initialData: posts, revalidateOnFocus: true },
   );
-  console.log(data.postsConnection);
+
   if (error) {
     return (
       <div>
@@ -104,7 +98,7 @@ export default function BlogPage({ posts }) {
         />
       </div>
       <div>
-        {data?.postsConnection?.edges?.map((post) => (
+        {data.postsConnection?.edges?.map((post) => (
           <div key={post.node.slug} className="grid grid-cols-1 md:grid-cols-4 py-6">
             <div className="mb-2 md:mb-0 md:col-span-1">
               <p className="text-gray-600 text-sm">{new Date(post.node.date).toDateString()}</p>
@@ -123,32 +117,28 @@ export default function BlogPage({ posts }) {
           </div>
         ))}
       </div>
-      <div className="flex justify-center">
-        <div className="flex space-x-5">
-          <div>
-            <button
-              onClick={() => {
-                setSkip(skip - 2);
-              }}
-              disabled={!data.postsConnection.pageInfo.hasPreviousPage}
-              className="bg-indigo-700 text-white rounded-md px-3 py-1 disabled:bg-gray-100 disabled:text-gray-500">
-              Previous
-            </button>
-          </div>
-          <div>
-            <button
-              onClick={() => {
-                setSkip(skip + 2);
-              }}
-              disabled={!data.postsConnection.pageInfo.hasNextPage}
-              className="bg-indigo-700 text-white rounded-md px-3 py-1 disabled:bg-gray-100 disabled:text-gray-500">
-              Next
-            </button>
-          </div>
-          <div className="text-gray-600 flex items-center">
-            Total Pages: {Math.round(data.postsConnection.aggregate.count / 2)}
-          </div>
+      <div className="flex space-x-5 justify-center items-center mt-10">
+        <div>
+          <button
+            onClick={() => {
+              setSkip(skip - 2);
+            }}
+            disabled={!data.postsConnection.pageInfo.hasPreviousPage}
+            className="bg-indigo-700 w-20 text-white px-3 py-1 rounded-md disabled:bg-gray-400 disabled:text-gray-800">
+            Previous
+          </button>
         </div>
+        <div>
+          <button
+            onClick={() => {
+              setSkip(skip + 2);
+            }}
+            disabled={!data.postsConnection.pageInfo.hasNextPage}
+            className="bg-indigo-700 w-20 text-white px-3 py-1 rounded-md disabled:bg-gray-400 disabled:text-gray-800">
+            Next
+          </button>
+        </div>
+        <div className="text-gray-700">Total Pages: {data.postsConnection.pageInfo.pageSize}</div>
       </div>
     </div>
   );
