@@ -23,7 +23,6 @@ module.exports = {
     "plugin:react-hooks/recommended",
     "plugin:jsx-a11y/recommended",
     "plugin:prettier/recommended",
-    "next",
   ],
   plugins: ["simple-import-sort"],
   rules: {
